@@ -1,0 +1,32 @@
+<ul>
+  <% if Admin::SynchronizationsController.searchable? %>
+    <li>
+      <%= render :partial => "/shared/admin/search",
+                  :locals => {
+                    :url => admin_synchronizations_path
+                  } %>
+    </li>
+  <% end %>
+  <!--
+  <li>
+    <%= link_to t('.create_new'), new_admin_synchronization_path,
+                 :class => "add_icon" %>
+  </li>
+  -->
+<!--
+<% if !searching? and Admin::SynchronizationsController.sortable? and Synchronization.count > 1 %>
+  <li>
+    <%= link_to t('.reorder', :what => "Synchronizations"),
+                 admin_synchronizations_path,
+                 :id => "reorder_action",
+                 :class => "reorder_icon" %>
+
+    <%= link_to t('.reorder_done', :what => "Synchronizations"),
+                 admin_synchronizations_path,
+                 :id => "reorder_action_done",
+                 :style => "display: none;",
+                 :class => "reorder_icon" %>
+  </li>
+<% end %>
+-->
+</ul>

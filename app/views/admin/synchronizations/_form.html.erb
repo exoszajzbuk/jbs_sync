@@ -1,0 +1,24 @@
+<%= form_for [:admin, @synchronization] do |f| -%>
+  <%= render :partial => "/shared/admin/error_messages", :locals => {
+          :object => @synchronization,
+          :include_object_name => true
+        } %>
+  
+  <div class='field'>
+    <%= f.label :model_name -%>
+    <%= f.text_field :model_name, :class => 'larger widest'  -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :method_name -%>
+    <%= f.text_field :method_name  -%>
+  </div>
+  
+  <%= render :partial => "/shared/admin/form_actions",
+              :locals => {
+                :f => f,
+                :continue_editing => false,
+                :delete_title => t('delete', :scope => 'admin.synchronizations.synchronization'),
+                :delete_confirmation => t('message', :scope => 'shared.admin.delete', :title => @synchronization.model_name)
+              } %>
+<% end -%>

@@ -1,0 +1,18 @@
+<li class='clearfix record <%= cycle("on", "on-hover") %>' id="<%= dom_id(synchronization) -%>">
+  <span class='title'>
+    <%= synchronization.model_name %> - <strong><%= synchronization.method_name %></strong> <em>(<%= synchronization.updated_at %>)</em>
+    <span class="preview">&nbsp;</span>
+  </span>
+  <span class='actions'>
+    <%= link_to refinery_icon_tag("application_go.png"), synchronization_path(synchronization),
+        :title => t('.view_live_html'),
+        :target => "_blank" %>
+    <%= link_to refinery_icon_tag("application_edit.png"), edit_admin_synchronization_path(synchronization),
+         :title => t('.edit') %>
+    <%= link_to refinery_icon_tag("delete.png"), admin_synchronization_path(synchronization),
+        :class => "cancel confirm-delete",
+        :title => t('.delete'),
+        :confirm => t('message', :scope => 'shared.admin.delete', :title => synchronization.model_name),
+        :method => :delete %>
+  </span>
+</li>

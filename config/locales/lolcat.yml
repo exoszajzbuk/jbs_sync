@@ -1,0 +1,25 @@
+lolcat:
+  shared:
+    admin:
+      image_picker:
+        image: IMAGE
+  plugins:
+    synchronizations:
+      title: Synchronizations
+  admin:
+    synchronizations:
+      actions:
+        create_new: CREATE NEW Synchronization
+        reorder: REORDR Synchronizations
+        reorder_done: DUN REORDERIN Synchronizations
+      records:
+        title: Synchronizations
+        sorry_no_results: SRY! THAR R NO RESULTS FINDZ.
+        no_items_yet: THAR R NO Synchronizations YET. CLICK "CREATE NEW Synchronization" 2 ADD UR FURST synchronization.
+      synchronization:
+        view_live_html: VIEW DIS synchronization LIV <BR/><EM>(OPENS IN NEW WINDOW)</EM>
+        edit: EDIT DIS synchronization
+        delete: REMOOV DIS synchronization FOREVR
+  synchronizations:
+    show:
+      other: OTHR Synchronizations
