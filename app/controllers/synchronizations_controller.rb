@@ -27,7 +27,7 @@ class SynchronizationsController < ApplicationController
     if params[:updated_at].nil? then
       @records = @model.all
     else
-      @records = @model.find(:all, :conditions => ['updated_at > ?', Time.parse(params[:updated_at])+1])
+      @records = model.find(:all, :conditions => ['updated_at > ?', Time.parse(params[:updated_at])+1])
     end
       
     respond_with_records @records
