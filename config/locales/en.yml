@@ -1,6 +1,7 @@
 en:
   format_error: 'Format error: try .json or .xml'
   not_synchronizable: 'Error: model not synchronizable'
+  needs_authentication: 'Error: model needs authentication'
   
   shared:
     admin:
