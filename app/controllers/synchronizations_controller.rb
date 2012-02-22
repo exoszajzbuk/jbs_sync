@@ -31,9 +31,9 @@ class SynchronizationsController < ApplicationController
   def testauthenticate
     # authenticate
     authenticated = authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
-      user = User.find_by_username(username)
-      unless user.nil?
-        username == user.username && user.valid_password?(password)
+      @user = User.find_by_username(username)
+      unless @user.nil?
+        username == @user.username && @user.valid_password?(password)
       end
     end
     
@@ -66,11 +66,13 @@ class SynchronizationsController < ApplicationController
     respond_with_records @records    
   end
   
-  def update_all_authenticated    
+  def update_all_authenticated
+    # authenticate  
     return unless testauthenticate == true
     
-    # render content
-    render :text => "authenticated stuff"
+    @records = @model.find_all_by_user_id(@user.id)
+    
+    respond_with_records @records
   end
     
   # delete sync a whole model
