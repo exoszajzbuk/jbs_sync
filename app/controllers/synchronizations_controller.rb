@@ -32,12 +32,16 @@ class SynchronizationsController < ApplicationController
     # authenticate
     authenticated = authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
       user = User.find_by_username(username)
-      username == user.username && user.valid_password?(password)
+      unless user.nil?
+        username == user.username && user.valid_password?(password)
+      end
     end
+    
     if authenticated == true
       true
     else
       false
+    end
   end
   
   # ------------------------------
