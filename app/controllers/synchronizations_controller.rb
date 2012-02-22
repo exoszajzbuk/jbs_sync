@@ -3,7 +3,7 @@ class SynchronizationsController < ApplicationController
   before_filter :find_all_synchronizations
   before_filter :find_page
   
-  before_filter :check_model, :only => [:update_all, :delete_all, :update_one]
+  before_filter :check_model, :only => [:update_all, :delete_all, :update_one, :create_record]
 
   def index
     # you can use meta fields from your model instead (e.g. browser_title)
@@ -41,6 +41,18 @@ class SynchronizationsController < ApplicationController
       true
     else
       false
+    end
+  end
+
+  # ------------------------------
+  # create records
+  def create_record
+    if @model.needs_authentication? then
+      return unless testauthenticate == true
+
+      @model.create_record(@user.id, params)
+      
+      render :nothing => true
     end
   end
   
