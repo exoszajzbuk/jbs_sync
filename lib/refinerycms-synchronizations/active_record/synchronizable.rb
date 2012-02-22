@@ -46,6 +46,10 @@
         def synchronizable(options = {})
           @synchronizable = true
           
+          if options[:authenticated] == true
+            @needs_authentication = true
+          end 
+          
           unless self.eql? Synchronization
             # trigger
             after_save :update_synchronization_record_update
@@ -76,6 +80,14 @@
       
         def synchronizable?
           if (@synchronizable == true) then
+            true
+          else
+            false
+          end
+        end
+        
+        def needs_authentication?
+          if (@needs_authentication == true) then
             true
           else
             false
