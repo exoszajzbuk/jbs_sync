@@ -23,28 +23,24 @@ class SynchronizationsController < ApplicationController
   # test login
   
   def testlogin
-    return unless testauthenticate == true
+    return unless auth_with_user == true
     
     render :nothing => true
   end
 
-  def testauthenticate
+  def auth_with_user
     # authenticate
-    authenticated = authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
-      unless @model.uses_credentials? then
-        @user = User.find_by_username(username)
-        unless @user.nil?
-          username == @user.username && @user.valid_password?(password)
-        end
-      else
-        username == @model.credentials[:username] && password == @model.credentials[:password]
+    authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
+      @user = User.find_by_username(username)
+      unless @user.nil?
+        username == @user.username && @user.valid_password?(password)
       end
     end
-    
-    if authenticated == true
-      true
-    else
-      false
+  end
+
+  def auth_with_credentials
+    authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
+      username == @model.credentials[:username] && password == @model.credentials[:password]
     end
   end
 
@@ -52,7 +48,7 @@ class SynchronizationsController < ApplicationController
   # create records
   def create_record
     if @model.needs_authentication? then
-      return unless testauthenticate == true
+      return unless auth_with_user == true
 
       record = @model.create_record(@user.id, params)
       
@@ -86,7 +82,7 @@ class SynchronizationsController < ApplicationController
   
   def update_all_authenticated
     # authenticate  
-    return unless testauthenticate == true
+    return unless auth_with_user == true
     
     @records = @model.find_all_by_user_id(@user.id)
     
@@ -96,7 +92,7 @@ class SynchronizationsController < ApplicationController
   
   def update_all_with_credentials
     # authenticate
-    return unless testauthenticate == true
+    return unless auth_with_credentials == true
     
     update_all_unauthenticated
   end
