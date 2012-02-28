@@ -31,9 +31,13 @@ class SynchronizationsController < ApplicationController
   def testauthenticate
     # authenticate
     authenticated = authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
-      @user = User.find_by_username(username)
-      unless @user.nil?
-        username == @user.username && @user.valid_password?(password)
+      unless @model.uses_credentials? then
+        @user = User.find_by_username(username)
+        unless @user.nil?
+          username == @user.username && @user.valid_password?(password)
+        end
+      else
+        username == @model.credentials[:username] && password == @model.credentials[:password]
       end
     end
     
@@ -63,6 +67,8 @@ class SynchronizationsController < ApplicationController
   def update_all
     if @model.needs_authentication? then
       update_all_authenticated
+    elsif @model.uses_credentials? then
+      update_all_with_credentials
     else
       update_all_unauthenticated
     end
@@ -85,6 +91,14 @@ class SynchronizationsController < ApplicationController
     @records = @model.find_all_by_user_id(@user.id)
     
     respond_with_records @records
+  end
+  
+  
+  def update_all_with_credentials
+    # authenticate
+    return unless testauthenticate == true
+    
+    update_all_unauthenticated
   end
     
   # delete sync a whole model

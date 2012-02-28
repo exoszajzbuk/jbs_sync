@@ -51,10 +51,15 @@
       module ClassMethods
         def synchronizable(options = {})
           @synchronizable = true
+          @credentials = {}
           
           if options[:authenticated] == true
             @needs_authentication = true
           end 
+          
+          unless options[:credentials].nil?
+            @credentials = options[:credentials]
+          end
           
           unless self.eql? Synchronization
             # trigger
@@ -97,6 +102,22 @@
             true
           else
             false
+          end
+        end
+        
+        def uses_credentials?
+          if @credentials.empty? then
+            false
+          else
+            true
+          end
+        end
+        
+        def credentials
+          unless @credentials.empty? then
+            @credentials
+          else
+            {}
           end
         end
         
