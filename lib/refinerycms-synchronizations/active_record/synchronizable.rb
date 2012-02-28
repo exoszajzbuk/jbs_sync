@@ -15,9 +15,12 @@
 
         if (! syncObj.nil?)
           syncObj.touch
+          if syncObj.model_updated_at < self.updated_at then
+            syncObj.model_updated_at = self.updated_at
+          end
           syncObj.save
         else
-          Synchronization.create!(:model_name => getModelName, :method_name => "update")
+          Synchronization.create!(:model_name => getModelName, :method_name => "update", :model_updated_at => self.updated_at)
         end
       end
 
@@ -26,9 +29,12 @@
 
         if (! syncObj.nil?)
           syncObj.touch
+          if syncObj.model_updated_at < self.updated_at then
+            syncObj.model_updated_at = self.updated_at
+          end
           syncObj.save
         else
-          Synchronization.create!(:model_name => getModelName, :method_name => "delete")
+          Synchronization.create!(:model_name => getModelName, :method_name => "delete", :model_updated_at => self.updated_at)
         end
       end
             

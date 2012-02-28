@@ -1,6 +1,6 @@
 <li class='clearfix record <%= cycle("on", "on-hover") %>' id="<%= dom_id(synchronization) -%>">
   <span class='title'>
-    <%= synchronization.model_name %> - <strong><%= synchronization.method_name %></strong> <em>(<%= synchronization.updated_at %>)</em>
+    <%= synchronization.model_name %> - <strong><%= synchronization.method_name %></strong> - <%= synchronization.model_updated_at %> <em>(<%= synchronization.updated_at %>)</em>
     <span class="preview">&nbsp;</span>
   </span>
   <span class='actions'>
