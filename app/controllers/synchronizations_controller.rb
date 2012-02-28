@@ -50,9 +50,9 @@ class SynchronizationsController < ApplicationController
     if @model.needs_authentication? then
       return unless testauthenticate == true
 
-      @model.create_record(@user.id, params)
+      record = @model.create_record(@user.id, params)
       
-      render :nothing => true
+      render :json => record
     end
   end
   
