@@ -20,7 +20,7 @@ class SynchronizationsController < ApplicationController
   end
   
   # ------------------------------
-  # test login
+  # login methods
   
   def testlogin
     return unless auth_with_user == true
@@ -41,6 +41,19 @@ class SynchronizationsController < ApplicationController
   def auth_with_credentials
     authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
       username == @model.credentials[:username] && password == @model.credentials[:password]
+    end
+  end
+
+  # ------------------------------
+  # create user
+  def create_user
+    user = User.new(:username => params[:username], :email => params[:email], :password => params[:password], :password_confirmation => params[:password])
+    user.add_role("Normal")
+    
+    if user.save then
+      render :json => user.id
+    else
+      render :text => "error"
     end
   end
 
