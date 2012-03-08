@@ -54,7 +54,7 @@ class SynchronizationsController < ApplicationController
       render :json => user.id
     else
       error_str = { :error => "email conflict" }
-      render :json => error_str, :status => 412
+      render :json => error_str, :status => 409
     end
   end
 
