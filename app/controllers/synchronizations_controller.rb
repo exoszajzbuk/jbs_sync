@@ -67,6 +67,12 @@ class SynchronizationsController < ApplicationController
       record = @model.create_record(@user.id, params)
       
       render :json => record
+    elsif @model.uses_credentials?
+      return unless auth_with_credentials == true
+      
+      record = @model.create(params)
+      
+      render :json => record
     end
   end
   
