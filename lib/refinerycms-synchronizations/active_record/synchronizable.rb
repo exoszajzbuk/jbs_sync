@@ -39,12 +39,20 @@
       end
             
       def as_json(options=nil)
-        unless (self.class.json_attrs?.nil?)
-          {
-            self.class.name.underscore.to_sym => Hash[self.class.json_attrs?.map{|j| [j[0],send(j[1])]}]
-          }
+        if (self.include_root_in_json?)
+          unless (self.class.json_attrs?.nil?)
+            {
+              self.class.name.underscore.to_sym => Hash[self.class.json_attrs?.map{|j| [j[0],send(j[1])]}]
+            }
+          else
+            { self.class.name.underscore.to_sym => attributes }
+          end
         else
-          { self.class.name.underscore.to_sym => attributes }
+          unless (self.class.json_attrs?.nil?)
+              Hash[self.class.json_attrs?.map{|j| [j[0],send(j[1])]}]
+          else
+            attributes
+          end
         end
       end
 
