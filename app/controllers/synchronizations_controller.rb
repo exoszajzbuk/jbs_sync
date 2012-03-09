@@ -30,10 +30,10 @@ class SynchronizationsController < ApplicationController
 
   def auth_with_user
     # authenticate
-    authenticate_or_request_with_http_basic "Authentication Required" do |username, password|
-      @user = User.find_by_username(username)
+    authenticate_or_request_with_http_basic "Authentication Required" do |email, password|
+      @user = User.find_by_email(email)
       unless @user.nil?
-        username == @user.username && @user.valid_password?(password)
+        email == @user.email && @user.valid_password?(password)
       end
     end
   end
@@ -47,13 +47,14 @@ class SynchronizationsController < ApplicationController
   # ------------------------------
   # create user
   def create_user
-    user = User.new(:username => params[:username], :email => params[:email], :password => params[:password], :password_confirmation => params[:password])
+    user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password])
     user.add_role("Normal")
     
     if user.save then
       render :json => user.id
     else
-      render :text => "error"
+      error_str = { :error => "email conflict" }
+      render :json => error_str, :status => 409
     end
   end
 
