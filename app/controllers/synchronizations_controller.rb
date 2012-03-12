@@ -63,15 +63,17 @@ class SynchronizationsController < ApplicationController
   def create_record
     if @model.needs_authentication? then
       return unless auth_with_user == true
+    else @model.uses_credentials?
+      return unless auth_with_credentials == true
+    end
 
-      record = @model.create_record(@user.id, params)
-      
-      unless record.nil? then
-        render :json => record
-      else
-        error_str = { :error => "record conflict" }
-        render :json => error_str, :status => 409
-      end
+    record = @model.create_record(@user.id, params)
+
+    unless record.nil? then
+      render :json => record
+    else
+      error_str = { :error => "record conflict" }
+      render :json => error_str, :status => 409
     end
   end
   
