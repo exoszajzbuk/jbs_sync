@@ -66,7 +66,12 @@ class SynchronizationsController < ApplicationController
 
       record = @model.create_record(@user.id, params)
       
-      render :json => record
+      unless record.nil? then
+        render :json => record
+      else
+        error_str = { :error => "record conflict" }
+        render :json => error_str, :status => 409
+      end
     end
   end
   
