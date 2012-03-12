@@ -71,7 +71,11 @@ class SynchronizationsController < ApplicationController
     end
     Rails.logger.info "Creating record with params: " + params.to_s
 
-    record = @model.create_record(@user.id, params)
+    unless @user.nil?
+      params[:user_id] = @user.id
+    end
+    
+    record = @model.create(params)
 
     unless record.nil? then
       render :json => record
