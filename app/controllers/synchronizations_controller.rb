@@ -38,7 +38,7 @@ class SynchronizationsController < ApplicationController
         Rails.logger.info "User1: " + @user.to_s
       end
       unless @user.nil?
-        email == @user.email && @user.valid_password?(password)
+        (email == @user.username || email == @user.email) && @user.valid_password?(password)
       end
     end
   end
