@@ -32,6 +32,11 @@ class SynchronizationsController < ApplicationController
     # authenticate
     authenticate_or_request_with_http_basic "Authentication Required" do |email, password|
       @user = User.find_by_email(email)
+      if @user.nil?
+        Rails.logger.info "User0: " + @user.to_s
+        @user = User.find_by_user_name(email)
+        Rails.logger.info "User1: " + @user.to_s
+      end
       unless @user.nil?
         email == @user.email && @user.valid_password?(password)
       end
