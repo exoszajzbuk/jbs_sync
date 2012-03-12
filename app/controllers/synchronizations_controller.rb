@@ -79,6 +79,10 @@ class SynchronizationsController < ApplicationController
     unless @user.nil?
       params[:user_id] = @user.id
     end
+
+    params.delete(:controller)
+    params.delete(:model_name)
+    params.delete(:action)
     
     record = @model.create(params)
 
