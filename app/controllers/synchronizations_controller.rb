@@ -61,11 +61,15 @@ class SynchronizationsController < ApplicationController
   # ------------------------------
   # create records
   def create_record
+    Rails.logger.info "First OK"
     if @model.needs_authentication? then
+      Rails.logger.info "Second here"
       return unless auth_with_user == true
     else @model.uses_credentials?
+      Rails.logger.info "Third here"
       return unless auth_with_credentials == true
     end
+    Rails.logger.info "Creating record with params: " + params.to_s
 
     record = @model.create_record(@user.id, params)
 
