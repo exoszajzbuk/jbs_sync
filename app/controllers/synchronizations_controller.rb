@@ -24,7 +24,7 @@ class SynchronizationsController < ApplicationController
   
   def testlogin
     return unless auth_with_user == true
-    
+
     render :nothing => true
   end
 
@@ -34,7 +34,7 @@ class SynchronizationsController < ApplicationController
       @user = User.find_by_email(email)
       if @user.nil?
         Rails.logger.info "User0: " + @user.to_s
-        @user = User.find_by_user_name(email)
+        @user = User.find_by_username(email)
         Rails.logger.info "User1: " + @user.to_s
       end
       unless @user.nil?
