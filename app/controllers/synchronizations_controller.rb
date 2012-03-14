@@ -76,7 +76,8 @@ class SynchronizationsController < ApplicationController
     end
     Rails.logger.info "Params: " + params.to_s
 
-    if @model.respond_to?('user_id') and not @user.nil? then
+    if @model.method_defined?(:user_id) and not @user.nil? then
+      Rails.logger.info "Adding user_id to params" + @user.id.to_s
       params[:user_id] = @user.id
     end
 
@@ -86,7 +87,7 @@ class SynchronizationsController < ApplicationController
     params.delete(:locale)
     Rails.logger.info "Creating record with params: " + params.to_s
     
-    record = @model.create(params)
+    record = @model.create_record(params)
 
     unless record.nil? then
       render :json => record

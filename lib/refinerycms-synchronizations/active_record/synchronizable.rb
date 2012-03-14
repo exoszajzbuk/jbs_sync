@@ -9,6 +9,10 @@
         self.class.to_s
       end
 
+      def create_record(params)
+        create(params)
+      end
+
       # synchronization table handling
       def update_synchronization_record_update
         syncObj = Synchronization.where(:model_name => getModelName, :method_name => "update").first
