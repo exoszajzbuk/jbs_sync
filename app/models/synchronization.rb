@@ -1,4 +1,4 @@
-class Synchronization < ActiveRecord::Base
+class Synchronization < ActiveRecord::Base 
 
   synchronizable
   json_attrs :fields => [:id, :model_name, :method_name, :model_updated_at, :updated_at]
