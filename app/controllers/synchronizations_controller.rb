@@ -83,6 +83,7 @@ class SynchronizationsController < ApplicationController
     params.delete(:controller)
     params.delete(:model_name)
     params.delete(:action)
+    params.delete(:locale)
     
     record = @model.create(params)
 
