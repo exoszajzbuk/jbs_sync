@@ -74,7 +74,7 @@ class SynchronizationsController < ApplicationController
       Rails.logger.info "Third here"
       return unless auth_with_credentials == true
     end
-    Rails.logger.info "Creating record with params: " + params.to_s
+    Rails.logger.info "Params: " + params.to_s
 
     if @model.respond_to?('user_id') and not @user.nil? then
       params[:user_id] = @user.id
@@ -84,6 +84,7 @@ class SynchronizationsController < ApplicationController
     params.delete(:model_name)
     params.delete(:action)
     params.delete(:locale)
+    Rails.logger.info "Creating record with params: " + params.to_s
     
     record = @model.create(params)
 
