@@ -76,7 +76,7 @@ class SynchronizationsController < ApplicationController
     end
     Rails.logger.info "Creating record with params: " + params.to_s
 
-    unless @user.nil?
+    if @model.respond_to?('user_id') and not @user.nil? then
       params[:user_id] = @user.id
     end
 
