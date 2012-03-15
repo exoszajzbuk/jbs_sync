@@ -52,7 +52,8 @@ class SynchronizationsController < ApplicationController
   # ------------------------------
   # create user
   def create_user
-    user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password])
+    user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password], :phone => params[:phone],
+      :name => params[:name])
     user.add_role("Normal")
     
     if user.save then
