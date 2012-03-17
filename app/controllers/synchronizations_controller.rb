@@ -99,6 +99,40 @@ class SynchronizationsController < ApplicationController
   end
   
   # ------------------------------
+  # create records
+  def update_records
+    Rails.logger.info "First OK"
+    if @model.needs_authentication? then
+      Rails.logger.info "Second here"
+      return unless auth_with_user == true
+    else @model.uses_credentials?
+      Rails.logger.info "Third here"
+      return unless auth_with_credentials == true
+    end
+    Rails.logger.info "Params: " + params.to_s
+
+    if @model.method_defined?(:user_id) and not @user.nil? then
+      Rails.logger.info "Adding user_id to params" + @user.id.to_s
+      params[:user_id] = @user.id
+    end
+
+    params.delete(:controller)
+    params.delete(:model_name)
+    params.delete(:action)
+    params.delete(:locale)
+    Rails.logger.info "Creating record with params: " + params.to_s
+    
+    record = @model.update_record(params)
+
+    unless record.nil? then
+      render :json => record
+    else
+      error_str = { :error => "record conflict" }
+      render :json => error_str, :status => 409
+    end
+  end
+  
+  # ------------------------------
   # custom synchronization methods
   
   # update sync a whole model
