@@ -100,7 +100,7 @@ class SynchronizationsController < ApplicationController
   
   # ------------------------------
   # create records
-  def update_records
+  def update_record
     Rails.logger.info "First OK"
     if @model.needs_authentication? then
       Rails.logger.info "Second here"
