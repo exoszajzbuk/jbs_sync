@@ -64,7 +64,7 @@
         def update_record(params)
           @record = find(params[:id])
           unless @record.nil? then
-            @record = update(params)
+            @record.update(params)
             @record.save
           else
             nil
