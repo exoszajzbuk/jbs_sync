@@ -3,7 +3,7 @@ class SynchronizationsController < ApplicationController
   before_filter :find_all_synchronizations
   before_filter :find_page
   
-  before_filter :check_model, :only => [:update_all, :delete_all, :update_one, :create_record]
+  before_filter :check_model, :only => [:update_all, :delete_all, :update_one, :create_record, :update_record]
 
   def index
     # you can use meta fields from your model instead (e.g. browser_title)
