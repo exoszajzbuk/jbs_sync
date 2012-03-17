@@ -66,6 +66,7 @@
           unless @record.nil? then
             @record.update_attributes(params)
             @record.save
+            @record
           else
             nil
           end
