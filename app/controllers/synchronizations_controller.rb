@@ -1,4 +1,6 @@
+require 'rack/oauth2'
 class SynchronizationsController < ApplicationController
+  class Unauthorized < StandardError; end
 
   before_filter :find_all_synchronizations
   before_filter :find_page
@@ -30,15 +32,36 @@ class SynchronizationsController < ApplicationController
 
   def auth_with_user
     # authenticate
-    authenticate_or_request_with_http_basic "Authentication Required" do |email, password|
-      @user = User.find_by_email(email)
-      if @user.nil?
-        Rails.logger.info "User0: " + @user.to_s
-        @user = User.find_by_username(email)
-        Rails.logger.info "User1: " + @user.to_s
+    if defined? params[:fb_identifier] and defined? params[:fb_auth_token] then
+      Rails.logger.info "Authenticating with facebook credentials: id: " + params[:fb_identifier] + ", auth token: " + params[:fb_auth_token]
+      fb_user = FbGraph::User.new(params[:fb_identifier], :access_token => params[:fb_auth_token]).fetch
+
+      # Facebook object is saved here
+      raise Unauthorized unless Facebook.identify(fb_user) 
+    
+      # If the user exists for that Facebook account search for it else create a new one
+      @user = User.find_by_facebook_id(fb_user.identifier)
+      if not @user.nil? then
+        Rails.logger.info "User is already registered"
+        true
+      else
+        random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
+        Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
+        @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fb_user.identifier, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
+        true
       end
-      unless @user.nil?
-        (email == @user.username || email == @user.email) && @user.valid_password?(password)
+    else
+      Rails.logger.info "Authenticating with http basic auth"
+      authenticate_or_request_with_http_basic "Authentication Required" do |email, password|
+        @user = User.find_by_email(email)
+        if @user.nil?
+          Rails.logger.info "User0: " + @user.to_s
+          @user = User.find_by_username(email)
+          Rails.logger.info "User1: " + @user.to_s
+        end
+        unless @user.nil?
+          (email == @user.username || email == @user.email) && @user.valid_password?(password)
+        end
       end
     end
   end
