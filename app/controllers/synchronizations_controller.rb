@@ -37,17 +37,19 @@ class SynchronizationsController < ApplicationController
       fb_user = FbGraph::User.new(params[:fb_identifier], :access_token => params[:fb_auth_token]).fetch
 
       # Facebook object is saved here
-      raise Unauthorized unless Facebook.identify(fb_user) 
+      fbObj = Facebook.identify(fb_user) 
+      raise Unauthorized unless fbObj
     
       # If the user exists for that Facebook account search for it else create a new one
-      @user = User.find_by_facebook_id(fb_user.identifier)
+      @user = User.find_by_facebook_id(fbObj.id)
       if not @user.nil? then
         Rails.logger.info "User is already registered"
         true
       else
         random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
         Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
-        @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fb_user.identifier, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
+        @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fbObj.id, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
+        Rails.logger.info "User is registered"
         true
       end
     else
