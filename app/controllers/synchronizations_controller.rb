@@ -116,8 +116,10 @@ class SynchronizationsController < ApplicationController
     record = @model.create_record(params)
 
     unless record.nil? then
+      Rails.logger.info "Rendering object: " + record.to_json
       render :json => record
     else
+      Rails.logger.info "Error on adding record 409"
       error_str = { :error => "record conflict" }
       render :json => error_str, :status => 409
     end
