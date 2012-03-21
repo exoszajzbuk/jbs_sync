@@ -32,7 +32,8 @@ class SynchronizationsController < ApplicationController
 
   def auth_with_user
     # authenticate
-    if defined? params[:fb_identifier] and defined? params[:fb_auth_token] then
+    Rails.logger.info "Authenticating ..."
+    if defined? params[:fb_identifier] and !params[:fb_identifier].nil? and defined? params[:fb_auth_token] and !params[:fb_auth_token].nil? then
       Rails.logger.info "Authenticating with facebook credentials: id: " + params[:fb_identifier] + ", auth token: " + params[:fb_auth_token]
       fb_user = FbGraph::User.new(params[:fb_identifier], :access_token => params[:fb_auth_token]).fetch
 
