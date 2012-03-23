@@ -47,11 +47,18 @@ class SynchronizationsController < ApplicationController
         Rails.logger.info "User is already registered"
         true
       else
-        random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
-        Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
-        @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fbObj.id, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
-        Rails.logger.info "User is registered"
-        true
+        @user = User.find_by_email(fb_user.email)
+        unless @user.nil? then
+          Rails.logger.info "User exists but without fb, connecting profiles... "
+          @user.facebook_id = fbObj.id
+          @user.save
+        else
+          random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
+          Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
+          @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fbObj.id, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
+          Rails.logger.info "User is registered"
+          true
+        end
       end
     else
       Rails.logger.info "Authenticating with http basic auth"
