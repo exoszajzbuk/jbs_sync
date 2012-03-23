@@ -122,6 +122,7 @@ class SynchronizationsController < ApplicationController
     Rails.logger.info "Creating record with params: " + params.to_s
     
     record = @model.create_record(params)
+    Rails.logger.info "Creating record finsihed"
 
     unless record.nil? then
       Rails.logger.info "Rendering object: " + record.to_json
