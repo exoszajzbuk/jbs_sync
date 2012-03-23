@@ -147,6 +147,7 @@ class SynchronizationsController < ApplicationController
     end
     Rails.logger.info "Params: " + params.to_s
 
+    Rails.logger.info "Adding user_id to params, " + @user.nil?.to_s + ", " + @model.method_defined?(:user_id).to_s
     if @model.method_defined?(:user_id) and not @user.nil? then
       Rails.logger.info "Adding user_id to params" + @user.id.to_s
       params[:user_id] = @user.id
