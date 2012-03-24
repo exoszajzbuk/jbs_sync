@@ -2,10 +2,31 @@ require 'rack/oauth2'
 class SynchronizationsController < ApplicationController
   class Unauthorized < StandardError; end
 
+  rescue_from ::BadRequest, :with => :bad_request
+  rescue_from ::RecordConflict, :with => :record_conflict
+  rescue_from ::Forbidden, :with => :forbidden
+
   before_filter :find_all_synchronizations
   before_filter :find_page
   
   before_filter :check_model, :only => [:update_all, :delete_all, :update_one, :create_record, :update_record]
+
+  def forbidden(ex)
+      Rails.logger.info "Forbidden: " + ex.why
+      error_str = { :error => ex.why }
+      render :json => error_str, :status => 403
+  end
+
+  def bad_request
+      Rails.logger.info "Bad request exception got"
+      error_str = { :error => "Bad request" }
+      render :json => error_str, :status => 400
+  end
+  
+  def record_conflict(ex)
+      Rails.logger.info "Record is in conflict with: " + ex.record_in_conflict.to_json
+      render :json => ex.record_in_conflict, :status => 409
+  end
 
   def index
     # you can use meta fields from your model instead (e.g. browser_title)
@@ -129,9 +150,8 @@ class SynchronizationsController < ApplicationController
       Rails.logger.info "Rendering object: " + record.to_json
       render :json => record
     else
-      Rails.logger.info "Error on adding record 409"
-      error_str = { :error => "record conflict" }
-      render :json => error_str, :status => 409
+      Rails.logger.info "Error"
+      render :json => "ERROR", :status => 500
     end
   end
   
