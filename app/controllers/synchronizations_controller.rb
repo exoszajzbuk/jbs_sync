@@ -24,7 +24,7 @@ class SynchronizationsController < ApplicationController
   end
   
   def record_conflict(ex)
-      Rails.logger.info "Record is in conflict with: " + ex.record_in_conflict.to_json
+      Rails.logger.info "Record is in conflict with: " + ex.record_in_conflict.as_json
       render :json => ex.record_in_conflict, :status => 409
   end
 
@@ -147,7 +147,7 @@ class SynchronizationsController < ApplicationController
     Rails.logger.info "Creating record finsihed"
 
     unless record.nil? then
-      Rails.logger.info "Rendering object: " + record.to_json
+      Rails.logger.info "Rendering object: " + record.as_json
       render :json => record
     else
       Rails.logger.info "Error"
