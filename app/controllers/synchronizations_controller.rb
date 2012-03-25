@@ -54,7 +54,7 @@ class SynchronizationsController < ApplicationController
   def testlogin
     return unless auth_with_user == true
 
-    render @user
+    render :json => @user
   end
 
   def auth_with_user
