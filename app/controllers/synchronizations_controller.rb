@@ -138,7 +138,7 @@ class SynchronizationsController < ApplicationController
         referral_act = Referral.create(:user_id => referral, :referred_user => @user.id, :name => "Referring " + @user.name, :points => 100)
         CollectedActivityitem.create(:user_id => referral, :activityitem_id => referral_act.activityitem_id, :collected_at => DateTime.now )
       end
-      render :json => @user.id
+      render :json => @user
     else
       Rails.logger.info "User not saved properly"
       error_str = ""
