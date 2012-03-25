@@ -41,6 +41,12 @@ class SynchronizationsController < ApplicationController
     # by swapping @page for @synchronization in the line below:
     present(@page)
   end
+
+  def signup
+    @user = User.new
+    @referral_id = params[:referral_id]
+    Rails.logger.info "Referral ID: " + params[:referral_id]
+  end
   
   # ------------------------------
   # login methods
@@ -48,7 +54,7 @@ class SynchronizationsController < ApplicationController
   def testlogin
     return unless auth_with_user == true
 
-    render :nothing => true
+    render @user
   end
 
   def auth_with_user
@@ -103,18 +109,41 @@ class SynchronizationsController < ApplicationController
     end
   end
 
+  def user_info
+    return unless auth_with_user == true
+    
+    render :json => @user
+  end
+
   # ------------------------------
   # create user
   def create_user
-    user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password], :phone => params[:phone],
-      :name => params[:name])
-    user.add_role("Normal")
-    
-    if user.save then
-      render :json => user.id
+    Rails.logger.info "User params: email: " + params[:user][:email].to_s + ", name: " + params[:user][:name].to_s
+    if params[:user].nil?
+      @user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password], :phone => params[:phone],
+        :name => params[:name])
     else
-      error_str = { :error => "email conflict" }
-      render :json => error_str, :status => 409
+      Rails.logger.info "ASDFASDFASDFASDF Referral ID: " + params[:user][:referral_id]
+      @user = User.new(:username => params[:user][:email], :email => params[:user][:email], :password => params[:user][:password], :password_confirmation => params[:user][:password], :phone => params[:user][:phone], :name => params[:user][:name])
+      referral = params[:user][:referral_id]
+    end
+    @user.add_role("Normal")
+    
+    if @user.save then
+      Rails.logger.info "User saved4"
+      if defined? referral and not referral.nil? then
+        signup = Signup.create(:user_id => @user.id, :referring_user => referral, :name => "Sign up bonus", :points => 100)
+        CollectedActivityitem.create(:user_id => @user.id, :activityitem_id => signup.activityitem_id, :collected_at => DateTime.now )
+        
+        referral_act = Referral.create(:user_id => referral, :referred_user => @user.id, :name => "Referring " + @user.name, :points => 100)
+        CollectedActivityitem.create(:user_id => referral, :activityitem_id => referral_act.activityitem_id, :collected_at => DateTime.now )
+      end
+      render :json => @user.id
+    else
+      Rails.logger.info "User not saved properly"
+      error_str = ""
+      @user.errors.each_full { |msg| error_str = error_str+msg }
+      render :json => { :error => error_str }, :status => 409
     end
   end
 

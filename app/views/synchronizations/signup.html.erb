@@ -1,0 +1,51 @@
+<%= form_for @user, :url => '/register' do |f| -%>
+  <%#= render :partial => "/shared/admin/error_messages", :locals => {
+          :object => @barcode,
+          :include_object_name => true
+        } %>
+  
+  <%#= render :partial => "admin/activityitems/fields",
+              :locals => {
+                :f => f,
+              } %>
+  
+  <div class='field'>
+    <%= f.label :name -%>
+    <%= f.text_field :name  -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :email -%>
+    <%= f.text_field :email  -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :phone -%>
+    <%= f.text_field :phone  -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :password -%>
+    <%= f.password_field :password -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :password_confirmation -%>
+    <%= f.password_field :password_confirmation -%>
+  </div>
+  
+  <div class='field'>
+    <%= f.label :referral -%>
+    <%= f.hidden_field :referral_id, :value => @referral_id -%>
+  </div>
+
+  <div class='actions'>
+    <%= f.submit 'Sign up' %>
+  </div>
+  
+  <%#= render :partial => "/shared/admin/form_actions",
+              :locals => {
+                :f => f,
+                :continue_editing => false,
+              } %>
+<% end -%>
