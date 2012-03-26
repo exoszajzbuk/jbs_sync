@@ -134,6 +134,8 @@ class SynchronizationsController < ApplicationController
       if defined? referral and not referral.nil? then
         signup = Signup.create(:user_id => @user.id, :referring_user => referral, :name => "Sign up bonus", :points => 100)
         CollectedActivityitem.create(:user_id => @user.id, :activityitem_id => signup.activityitem_id, :collected_at => DateTime.now )
+        TeamMember.create(:user_id => @user.id, :member_id => referral)
+        TeamMember.create(:user_id => referral, :member_id => @user.id)
         
         referral_act = Referral.create(:user_id => referral, :referred_user => @user.id, :name => "Referring " + @user.name, :points => 100)
         CollectedActivityitem.create(:user_id => referral, :activityitem_id => referral_act.activityitem_id, :collected_at => DateTime.now )
