@@ -178,7 +178,7 @@ class SynchronizationsController < ApplicationController
     Rails.logger.info "Creating record finsihed"
 
     unless record.nil? then
-      Rails.logger.info "Rendering object: " + record.as_json
+      Rails.logger.info "Rendering object: " + record.as_json.to_s
       render :json => record
     else
       Rails.logger.info "Error"
