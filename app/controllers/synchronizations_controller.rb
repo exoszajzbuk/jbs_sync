@@ -60,34 +60,34 @@ class SynchronizationsController < ApplicationController
   def auth_with_user
     # authenticate
     Rails.logger.info "Authenticating ..."
-    if defined? params[:fb_identifier] and !params[:fb_identifier].nil? and defined? params[:fb_auth_token] and !params[:fb_auth_token].nil? then
-      Rails.logger.info "Authenticating with facebook credentials: id: " + params[:fb_identifier] + ", auth token: " + params[:fb_auth_token]
-      fb_user = FbGraph::User.new(params[:fb_identifier], :access_token => params[:fb_auth_token]).fetch
-
-      # Facebook object is saved here
-      fbObj = Facebook.identify(fb_user) 
-      raise Unauthorized unless fbObj
-    
-      # If the user exists for that Facebook account search for it else create a new one
-      @user = User.find_by_facebook_id(fbObj.id)
-      if not @user.nil? then
-        Rails.logger.info "User is already registered"
-        true
-      else
-        @user = User.find_by_email(fb_user.email)
-        unless @user.nil? then
-          Rails.logger.info "User exists but without fb, connecting profiles... "
-          @user.facebook_id = fbObj.id
-          @user.save
-        else
-          random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
-          Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
-          @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fbObj.id, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
-          Rails.logger.info "User is registered"
-          true
-        end
-      end
-    else
+#    if defined? params[:fb_identifier] and !params[:fb_identifier].nil? and defined? params[:fb_auth_token] and !params[:fb_auth_token].nil? then
+#      Rails.logger.info "Authenticating with facebook credentials: id: " + params[:fb_identifier] + ", auth token: " + params[:fb_auth_token]
+#      fb_user = FbGraph::User.new(params[:fb_identifier], :access_token => params[:fb_auth_token]).fetch
+#
+#      # Facebook object is saved here
+#      fbObj = Facebook.identify(fb_user) 
+#      raise Unauthorized unless fbObj
+#    
+#      # If the user exists for that Facebook account search for it else create a new one
+#      @user = User.find_by_facebook_id(fbObj.id)
+#      if not @user.nil? then
+#        Rails.logger.info "User is already registered"
+#        true
+#      else
+#        @user = User.find_by_email(fb_user.email)
+#        unless @user.nil? then
+#          Rails.logger.info "User exists but without fb, connecting profiles... "
+#          @user.facebook_id = fbObj.id
+#          @user.save
+#        else
+#          random_password = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{fb_user.email}--#{params[:fb_auth_token]}--")[0,10]
+#          Rails.logger.info "User needs registration: name: #{fb_user.first_name} #{fb_user.last_name}, email: #{fb_user.email}, pass: #{random_password}"
+#          @user = User.create!({ :name => fb_user.first_name + " " + fb_user.last_name, :email => fb_user.email, :facebook_id => fbObj.id, :username => fb_user.email, :password => random_password, :password_confirmation => random_password })
+#          Rails.logger.info "User is registered"
+#          true
+#        end
+#      end
+#    else
       Rails.logger.info "Authenticating with http basic auth"
       authenticate_or_request_with_http_basic "Authentication Required" do |email, password|
         @user = User.find_by_email(email)
@@ -100,7 +100,7 @@ class SynchronizationsController < ApplicationController
           (email == @user.username || email == @user.email) && @user.valid_password?(password)
         end
       end
-    end
+#    end
   end
 
   def auth_with_credentials
@@ -118,35 +118,35 @@ class SynchronizationsController < ApplicationController
   # ------------------------------
   # create user
   def create_user
-    Rails.logger.info "User params: email: " + params[:user][:email].to_s + ", name: " + params[:user][:name].to_s
-    if params[:user].nil?
-      @user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password], :phone => params[:phone],
-        :name => params[:name])
-    else
-      Rails.logger.info "ASDFASDFASDFASDF Referral ID: " + params[:user][:referral_id]
-      @user = User.new(:username => params[:user][:email], :email => params[:user][:email], :password => params[:user][:password], :password_confirmation => params[:user][:password], :phone => params[:user][:phone], :name => params[:user][:name])
-      referral = params[:user][:referral_id]
-    end
-    @user.add_role("Normal")
-    
-    if @user.save then
-      Rails.logger.info "User saved4"
-      if defined? referral and not referral.nil? then
-        signup = Signup.create(:user_id => @user.id, :referring_user => referral, :name => "Sign up bonus", :points => 100)
-        CollectedActivityitem.create(:user_id => @user.id, :activityitem_id => signup.activityitem_id, :collected_at => DateTime.now )
-        TeamMember.create(:user_id => @user.id, :member_id => referral)
-        TeamMember.create(:user_id => referral, :member_id => @user.id)
-        
-        referral_act = Referral.create(:user_id => referral, :referred_user => @user.id, :name => "Referring " + @user.name, :points => 100)
-        CollectedActivityitem.create(:user_id => referral, :activityitem_id => referral_act.activityitem_id, :collected_at => DateTime.now )
-      end
-      render :json => @user
-    else
-      Rails.logger.info "User not saved properly"
-      error_str = ""
-      @user.errors.each_full { |msg| error_str = error_str+msg }
-      render :json => { :error => error_str }, :status => 409
-    end
+#    Rails.logger.info "User params: email: " + params[:user][:email].to_s + ", name: " + params[:user][:name].to_s
+#    if params[:user].nil?
+#      @user = User.new(:username => params[:email], :email => params[:email], :password => params[:password], :password_confirmation => params[:password], :phone => params[:phone],
+#        :name => params[:name])
+#    else
+#      Rails.logger.info "ASDFASDFASDFASDF Referral ID: " + params[:user][:referral_id]
+#      @user = User.new(:username => params[:user][:email], :email => params[:user][:email], :password => params[:user][:password], :password_confirmation => params[:user][:password], :phone => params[:user][:phone], :name => params[:user][:name])
+#      referral = params[:user][:referral_id]
+#    end
+#    @user.add_role("Normal")
+#    
+#    if @user.save then
+#      Rails.logger.info "User saved4"
+#      if defined? referral and not referral.nil? then
+#        signup = Signup.create(:user_id => @user.id, :referring_user => referral, :name => "Sign up bonus", :points => 100)
+#        CollectedActivityitem.create(:user_id => @user.id, :activityitem_id => signup.activityitem_id, :collected_at => DateTime.now )
+#        TeamMember.create(:user_id => @user.id, :member_id => referral)
+#        TeamMember.create(:user_id => referral, :member_id => @user.id)
+#        
+#        referral_act = Referral.create(:user_id => referral, :referred_user => @user.id, :name => "Referring " + @user.name, :points => 100)
+#        CollectedActivityitem.create(:user_id => referral, :activityitem_id => referral_act.activityitem_id, :collected_at => DateTime.now )
+#      end
+#      render :json => @user
+#    else
+#      Rails.logger.info "User not saved properly"
+#      error_str = ""
+#      @user.errors.each_full { |msg| error_str = error_str+msg }
+#      render :json => { :error => error_str }, :status => 409
+#    end
   end
 
   # ------------------------------
