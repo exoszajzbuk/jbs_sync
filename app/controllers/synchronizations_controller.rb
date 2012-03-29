@@ -209,13 +209,16 @@ class SynchronizationsController < ApplicationController
     params.delete(:model_name)
     params.delete(:action)
     params.delete(:locale)
-    Rails.logger.info "Creating record with params: " + params.to_s
+    Rails.logger.info "Updating record with params: " + params.to_s
     
     record = @model.update_record(params)
+    Rails.logger.info "Updating record finsihed"
 
     unless record.nil? then
+      Rails.logger.info "Rendering updated object: " + record.as_json.to_s
       render :json => record
     else
+      Rails.logger.info "Error"
       error_str = { :error => "record conflict" }
       render :json => error_str, :status => 409
     end
