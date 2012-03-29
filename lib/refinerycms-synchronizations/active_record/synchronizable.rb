@@ -86,12 +86,15 @@ module ActiveRecord
       end
       
       def update_record(params)
+        Rails.logger.info "Finding record with id: " + params[:id].to_s
         @record = find(params[:id])
         unless @record.nil? then
+          Rails.logger.info "record found"
           @record.update_attributes(params)
           @record.save
           @record
         else
+          Rails.logger.info "record not found"
           nil
         end
       end
