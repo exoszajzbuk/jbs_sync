@@ -57,6 +57,12 @@ class SynchronizationsController < ApplicationController
     render :json => @user
   end
 
+  def myteam
+    return unless auth_with_user == true
+
+    render :json => @user.myteam_in_json
+  end
+
   def auth_with_user
     # authenticate
     Rails.logger.info "Authenticating ..."
